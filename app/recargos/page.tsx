@@ -29,6 +29,8 @@ type MonthlyStat = {
   detalle: string[];
 };
 
+type DbStatus = "checking" | "connected" | "saving" | "local" | "error";
+
 const DEFAULT_PERSONAL = [
   "Adjutor (e.g) Magali Cepeda",
   "Adjutor (e.g) Lautaro Cardona",
@@ -278,13 +280,60 @@ export default function Page() {
   const [selectedPerson, setSelectedPerson] = useState<string>("");
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [dbStatus, setDbStatus] = useState<DbStatus>("checking");
+  const [dbMessage, setDbMessage] = useState("Verificando conexión con la base de datos...");
 
   const fileInput = useRef<HTMLInputElement>(null);
+  const dbConnected = useRef(false);
+  const remoteReady = useRef(false);
+  const syncTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!hydrated) return;
-    setPersonal(loadLS("ctb_personal", DEFAULT_PERSONAL));
-    setHistory(loadLS("ctb_historial", []));
+
+    const localPersonal = loadLS("ctb_personal", DEFAULT_PERSONAL);
+    const localHistory = loadLS<Guardia[]>("ctb_historial", []);
+    setPersonal(localPersonal);
+    setHistory(localHistory);
+
+    let alive = true;
+
+    async function loadRemoteData() {
+      try {
+        const response = await fetch("/api/recargos/sync", { cache: "no-store" });
+        const data = await response.json();
+
+        if (!alive) return;
+
+        if (!data.configured) {
+          dbConnected.current = false;
+          setDbStatus("local");
+          setDbMessage("Base de datos no configurada: se usa respaldo local del navegador.");
+          remoteReady.current = true;
+          return;
+        }
+
+        dbConnected.current = true;
+        setDbStatus("connected");
+        setDbMessage("Base de datos conectada. El historial mensual y el personal se sincronizan automáticamente.");
+
+        if (Array.isArray(data.personal) && data.personal.length > 0) setPersonal(data.personal);
+        if (Array.isArray(data.history) && data.history.length > 0) setHistory(data.history);
+        remoteReady.current = true;
+      } catch {
+        if (!alive) return;
+        dbConnected.current = false;
+        setDbStatus("error");
+        setDbMessage("No se pudo conectar con la base. La herramienta sigue funcionando con datos locales.");
+        remoteReady.current = true;
+      }
+    }
+
+    loadRemoteData();
+
+    return () => {
+      alive = false;
+    };
   }, [hydrated]);
 
   useEffect(() => {
@@ -297,6 +346,19 @@ export default function Page() {
     saveLS("ctb_historial", history);
   }, [history, hydrated]);
 
+  useEffect(() => {
+    if (!hydrated || !remoteReady.current || !dbConnected.current) return;
+    if (syncTimer.current) clearTimeout(syncTimer.current);
+
+    syncTimer.current = setTimeout(() => {
+      pushSyncNow(false);
+    }, 700);
+
+    return () => {
+      if (syncTimer.current) clearTimeout(syncTimer.current);
+    };
+  }, [personal, history, hydrated]);
+
   const currentGuardia: Guardia = {
     fecha,
     fechaKey: fechaKey(fecha),
@@ -308,6 +370,41 @@ export default function Page() {
     novedades: novedades.filter((n) => n.persona || n.detalle),
     observaciones,
   };
+
+  async function pushSyncNow(showAlert = true) {
+    if (!dbConnected.current) {
+      if (showAlert) alert("La base de datos todavía no está conectada. Se conserva el respaldo local.");
+      return;
+    }
+
+    try {
+      setDbStatus("saving");
+      setDbMessage("Sincronizando historial y personal con la base de datos...");
+      const response = await fetch("/api/recargos/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ personal, history }),
+      });
+      const data = await response.json();
+
+      if (!response.ok || data.error) throw new Error(data.error || "No se pudo sincronizar.");
+
+      if (!data.configured) {
+        dbConnected.current = false;
+        setDbStatus("local");
+        setDbMessage("Base de datos no configurada: se usa respaldo local del navegador.");
+        return;
+      }
+
+      setDbStatus("connected");
+      setDbMessage("Base de datos conectada. Última sincronización completada.");
+      if (showAlert) alert("Datos sincronizados correctamente.");
+    } catch {
+      setDbStatus("error");
+      setDbMessage("No se pudo sincronizar con la base. El respaldo local sigue actualizado.");
+      if (showAlert) alert("No se pudo sincronizar con la base de datos.");
+    }
+  }
 
   function updateRecargo(index: number, patch: Partial<Recargo>) {
     setRecargos((prev) => prev.map((r, i) => (i === index ? { ...r, ...patch } : r)));
@@ -599,7 +696,7 @@ export default function Page() {
     saveGuardiaToHistory(guardia);
     const canvas = generateReportCanvas(guardia);
     downloadCanvas(canvas, `centinelas_turno_b_${guardia.fecha.replace(/\//g, "-")}.jpg`);
-    alert("JPG generado. El historial de esta fecha fue actualizado sin duplicar la guardia.");
+    alert("JPG generado. El historial de esta fecha fue actualizado sin duplicar la guardia. Si la base está conectada, se sincroniza automáticamente.");
   }
 
   function generarComparativo() {
@@ -743,6 +840,11 @@ export default function Page() {
         <div className="green-line" />
         <div className="sub">Carga diaria, historial mensual, personal y respaldos con una identidad visual unificada.</div>
       </header>
+
+      <div className={`db-status ${dbStatus}`}>
+        <strong>{dbStatus === "connected" ? "Base conectada" : dbStatus === "saving" ? "Guardando" : dbStatus === "checking" ? "Verificando" : dbStatus === "local" ? "Modo local" : "Sin conexión"}</strong>
+        <span>{dbMessage}</span>
+      </div>
 
       <nav className="tabs">
         <button className={tab === "carga" ? "active" : ""} onClick={() => setTab("carga")}>Carga diaria</button>
@@ -940,13 +1042,14 @@ export default function Page() {
           <div className="card">
             <h2>Respaldo de datos</h2>
             <div className="notice">
-              Esta versión guarda los datos en el navegador del dispositivo. En iPhone funciona bien, pero para no perder datos conviene exportar un respaldo periódicamente. Para usar la misma información en varios dispositivos, después conviene conectar una base de datos.
+              El historial mensual y la nómina de personal ahora pueden guardarse en Supabase/Postgres. Si las variables de entorno no están configuradas, la herramienta sigue usando respaldo local del navegador y permite exportar/importar JSON.
             </div>
             <div className="actions">
               <button className="success" onClick={exportBackup}>Exportar respaldo JSON</button>
               <button className="secondary" onClick={() => fileInput.current?.click()}>Importar respaldo JSON</button>
+              <button className="secondary" onClick={() => pushSyncNow(true)} disabled={!dbConnected.current}>Sincronizar base</button>
               <input ref={fileInput} type="file" accept="application/json" hidden onChange={(e) => e.target.files?.[0] && importBackup(e.target.files[0])} />
-              <button className="danger" onClick={() => confirm("¿Borrar todo el historial?") && setHistory([])}>Borrar historial</button>
+              <button className="danger" onClick={() => confirm("¿Borrar todo el historial? También se sincronizará el borrado si la base está conectada.") && setHistory([])}>Borrar historial</button>
             </div>
           </div>
         </section>
