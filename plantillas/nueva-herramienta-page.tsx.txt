@@ -1,0 +1,23 @@
+import Link from "next/link";
+
+export default function NuevaHerramientaPage() {
+  return (
+    <main className="app">
+      <div className="topbar">
+        <Link href="/" className="back-link">← Volver al inicio</Link>
+        <span>Suite SPB</span>
+      </div>
+
+      <section className="header app-hero compact">
+        <h1>Nueva herramienta</h1>
+        <p className="sub">Descripción breve de qué problema resuelve esta herramienta.</p>
+        <div className="green-line" />
+      </section>
+
+      <section className="card">
+        <h2>Contenido</h2>
+        <p>Acá va la lógica, formulario o pantalla principal.</p>
+      </section>
+    </main>
+  );
+}
