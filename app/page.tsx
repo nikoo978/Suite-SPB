@@ -25,21 +25,7 @@ export default function HomePage() {
         <aside className="hero-panel" aria-label="Resumen de herramientas">
           <div className="panel-orb">{herramientas.length}</div>
           <strong>Herramientas integradas</strong>
-          <span>Una sola app Next.js preparada para Vercel, mantenimiento simple y rutas independientes.</span>
         </aside>
-      </section>
-
-      <section className="landing-maintenance" aria-label="Mantenimiento y crecimiento">
-        <div>
-          <span className="eyebrow">Mantenimiento</span>
-          <h2>{suiteInfo.maintenanceTitle}</h2>
-          <p>{suiteInfo.maintenanceDescription}</p>
-        </div>
-        <div className="maintenance-steps" aria-label="Pasos para agregar una herramienta">
-          <span>1. Crear ruta</span>
-          <span>2. Agregar tarjeta</span>
-          <span>3. Subir a GitHub</span>
-        </div>
       </section>
 
       <section className="project-grid" aria-label="Herramientas disponibles">
@@ -57,6 +43,19 @@ export default function HomePage() {
             <strong className="project-open">Entrar →</strong>
           </Link>
         ))}
+      </section>
+      
+      <section className="landing-maintenance" aria-label="Mantenimiento y crecimiento">
+        <div>
+          <span className="eyebrow">Mantenimiento</span>
+          <h2>{suiteInfo.maintenanceTitle}</h2>
+          <p>{suiteInfo.maintenanceDescription}</p>
+        </div>
+        <div className="maintenance-steps" aria-label="Pasos para agregar una herramienta">
+          <span>1. Crear ruta</span>
+          <span>2. Agregar tarjeta</span>
+          <span>3. Subir a GitHub</span>
+        </div>
       </section>
     </main>
   );
