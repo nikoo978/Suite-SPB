@@ -888,7 +888,7 @@ export default function Page() {
             <button type="submit" className="primary-btn">Ingresar</button>
           </form>
 
-          <div className="pin-help">El PIN es una barrera simple para evitar accesos casuales. Se configura con <code>NEXT_PUBLIC_RECARGOS_PIN</code>.</div>
+          <div className="pin-help">El PIN es para personal autorizado!.</div>
         </section>
       </main>
     );
