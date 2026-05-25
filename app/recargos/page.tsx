@@ -31,6 +31,8 @@ type MonthlyStat = {
 
 type DbStatus = "checking" | "connected" | "saving" | "local" | "error";
 
+const RECARGOS_PIN = process.env.NEXT_PUBLIC_RECARGOS_PIN || "2468";
+
 const DEFAULT_PERSONAL = [
   "Adjutor (e.g) Magali Cepeda",
   "Adjutor (e.g) Lautaro Cardona",
@@ -282,11 +284,36 @@ export default function Page() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [dbStatus, setDbStatus] = useState<DbStatus>("checking");
   const [dbMessage, setDbMessage] = useState("Verificando conexión con la base de datos...");
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [pinUnlocked, setPinUnlocked] = useState(false);
 
   const fileInput = useRef<HTMLInputElement>(null);
   const dbConnected = useRef(false);
   const remoteReady = useRef(false);
   const syncTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    setPinUnlocked(sessionStorage.getItem("recargos_pin_ok") === "1");
+  }, [hydrated]);
+
+  function unlockRecargos(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (pinInput.trim() === RECARGOS_PIN) {
+      sessionStorage.setItem("recargos_pin_ok", "1");
+      setPinUnlocked(true);
+      setPinError("");
+      setPinInput("");
+      return;
+    }
+    setPinError("PIN incorrecto. Revisá los 4 dígitos e intentá nuevamente.");
+  }
+
+  function lockRecargos() {
+    sessionStorage.removeItem("recargos_pin_ok");
+    setPinUnlocked(false);
+  }
 
   useEffect(() => {
     if (!hydrated) return;
@@ -827,11 +854,52 @@ export default function Page() {
 
   if (!hydrated) return <main className="app">Cargando...</main>;
 
+  if (!pinUnlocked) {
+    return (
+      <main className="app pin-app">
+        <div className="topbar">
+          <Link href="/" className="back-link">← Inicio</Link>
+          <span>Acceso restringido</span>
+        </div>
+
+        <section className="pin-card">
+          <span className="eyebrow">Turno B</span>
+          <h1>Recargos y Francos</h1>
+          <p>Ingresá el PIN de 4 dígitos para acceder a la herramienta.</p>
+
+          <form onSubmit={unlockRecargos} className="pin-form">
+            <label>
+              PIN de acceso
+              <input
+                value={pinInput}
+                onChange={(e) => {
+                  setPinInput(e.target.value.replace(/\D/g, "").slice(0, 4));
+                  setPinError("");
+                }}
+                inputMode="numeric"
+                pattern="[0-9]{4}"
+                maxLength={4}
+                autoFocus
+                placeholder="••••"
+                type="password"
+              />
+            </label>
+            {pinError && <div className="pin-error">{pinError}</div>}
+            <button type="submit" className="primary-btn">Ingresar</button>
+          </form>
+
+          <div className="pin-help">El PIN es una barrera simple para evitar accesos casuales. Se configura con <code>NEXT_PUBLIC_RECARGOS_PIN</code>.</div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="app">
       <div className="topbar">
         <Link href="/" className="back-link">← Inicio</Link>
         <span>Suite Operativa</span>
+        <button type="button" className="topbar-button" onClick={lockRecargos}>Bloquear</button>
       </div>
 
       <header className="header">

@@ -1023,3 +1023,76 @@ tr.inicio {
   border-color: rgba(180, 35, 24, 0.25);
   background: var(--danger-soft);
 }
+
+.pin-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pin-card {
+  width: min(460px, 100%);
+  margin: 40px auto;
+  padding: 34px;
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(20, 36, 50, 0.98), rgba(10, 22, 33, 0.98));
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+}
+
+.pin-card h1 {
+  margin: 10px 0 8px;
+  color: var(--text);
+}
+
+.pin-card p,
+.pin-help {
+  color: var(--muted);
+}
+
+.pin-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.pin-form input {
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 10px;
+  font-weight: 800;
+}
+
+.pin-error {
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.28);
+  border: 1px solid rgba(248, 113, 113, 0.32);
+}
+
+.pin-help {
+  margin-top: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.pin-help code {
+  color: var(--accent);
+}
+
+.topbar-button {
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  background: rgba(15, 23, 42, 0.5);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.topbar-button:hover {
+  color: var(--text);
+  border-color: rgba(125, 211, 252, 0.45);
+}

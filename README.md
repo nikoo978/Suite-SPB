@@ -198,3 +198,46 @@ Los colores principales están definidos en `app/globals.css` dentro de `:root`.
 ## Paleta visual descansada
 
 La interfaz usa una paleta oscura/azulada con tarjetas de bajo brillo y acentos verde agua para reducir el cansancio visual durante el uso prolongado. Los colores principales están centralizados en `app/globals.css` dentro de `:root`, por lo que se pueden ajustar sin modificar cada pantalla.
+
+## PIN de acceso para Recargos
+
+La herramienta `/recargos` tiene un bloqueo simple de 4 dígitos para evitar accesos casuales.
+No es una autenticación fuerte: el objetivo es solo impedir que cualquier persona que abra la URL ingrese directamente.
+
+### Configuración local
+
+Crear o editar `.env.local` en la raíz del proyecto:
+
+```env
+NEXT_PUBLIC_RECARGOS_PIN=2468
+```
+
+También deben mantenerse las variables de Supabase si se usa la base de datos:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=TU_SERVICE_ROLE_KEY
+NEXT_PUBLIC_RECARGOS_PIN=2468
+```
+
+### Configuración en Vercel
+
+Ir a:
+
+```txt
+Project Settings → Environment Variables
+```
+
+Agregar:
+
+```txt
+NEXT_PUBLIC_RECARGOS_PIN
+```
+
+Valor ejemplo:
+
+```txt
+2468
+```
+
+Después hacer redeploy. Para cambiar el PIN en producción, solo se cambia esta variable en Vercel y se vuelve a desplegar.
