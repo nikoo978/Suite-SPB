@@ -136,10 +136,10 @@ function wrapCanvas(ctx: CanvasRenderingContext2D, text: string, maxWidth: numbe
 }
 
 function drawIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, type: string) {
-  const navy = "#0b2d42";
-  const green = "#2e7d6a";
+  const navy = "#102a36";
+  const green = "#5cc8b2";
   ctx.save();
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = "#f6fbfb";
   ctx.strokeStyle = green;
   ctx.lineWidth = 4;
   ctx.beginPath();
@@ -147,20 +147,20 @@ function drawIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, type: s
   ctx.fill();
   ctx.stroke();
 
-  ctx.fillStyle = "#e3f4ee";
+  ctx.fillStyle = "#1b3c3a";
   ctx.beginPath();
   ctx.arc(cx, cy, 31, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.strokeStyle = navy;
-  ctx.fillStyle = "#fff";
+  ctx.fillStyle = "#f6fbfb";
   ctx.lineWidth = 3;
 
   if (type === "calendar") {
     ctx.strokeRect(cx - 20, cy - 14, 40, 34);
     ctx.fillStyle = navy;
     ctx.fillRect(cx - 20, cy - 14, 40, 10);
-    ctx.fillStyle = "#aeb8bf";
+    ctx.fillStyle = "#7f98a6";
     for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) ctx.fillRect(cx - 13 + i * 10, cy + j * 9, 5, 5);
     ctx.strokeStyle = green;
     ctx.lineWidth = 4;
@@ -228,7 +228,7 @@ function drawIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, type: s
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#f6fbfb";
     ctx.beginPath();
     ctx.arc(cx, cy - 5, 5, 0, Math.PI * 2);
     ctx.fill();
@@ -495,12 +495,12 @@ export default function Page() {
     const ctx = canvas.getContext("2d")!;
     ctx.scale(scale, scale);
 
-    const navy = "#0b2d42";
-    const green = "#2e7d6a";
-    const text = "#10212d";
-    const line = "#d7e2e8";
+    const navy = "#102a36";
+    const green = "#5cc8b2";
+    const text = "#e8f2f4";
+    const line = "#284252";
 
-    ctx.fillStyle = "#eef3f6";
+    ctx.fillStyle = "#0b1620";
     ctx.fillRect(0, 0, W, H);
 
     ctx.strokeStyle = navy;
@@ -508,7 +508,7 @@ export default function Page() {
     drawRoundedRect(ctx, 10, 10, W - 20, H - 20, 32, "transparent", navy);
 
     drawRoundedRect(ctx, 28, 24, W - 56, 246, 30, navy);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#f6fbfb";
     ctx.font = "bold 74px Arial";
     ctx.fillText("CENTINELAS", 70, 100);
     ctx.strokeStyle = green;
@@ -517,10 +517,10 @@ export default function Page() {
     ctx.moveTo(70, 146);
     ctx.lineTo(W - 80, 146);
     ctx.stroke();
-    ctx.fillStyle = "#d5f3e7";
+    ctx.fillStyle = "#b8f3e4";
     ctx.font = "bold 31px Arial";
     ctx.fillText("Turno B", 70, 188);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#f6fbfb";
     ctx.fillText("| Recargos y Francos", 215, 188);
     ctx.font = "bold 20px Arial";
     ctx.fillText(`Guardia: ${guardia.fecha}`, W - 330, 154);
@@ -540,8 +540,8 @@ export default function Page() {
       const x2 = W - 36;
       const h = secH(rows.length, minHeight);
       drawIcon(ctx, 82, y + 66, icon);
-      drawRoundedRect(ctx, x1 + 4, y + 12, x2 - x1, h, 24, "#e0e6ea");
-      drawRoundedRect(ctx, x1, y + 8, x2 - x1, h, 24, "#fff", line);
+      drawRoundedRect(ctx, x1 + 4, y + 12, x2 - x1, h, 24, "#08111a");
+      drawRoundedRect(ctx, x1, y + 8, x2 - x1, h, 24, "#142432", line);
       const tw: Record<string, number> = {
         RECARGOS: 340,
         FRANCOS: 305,
@@ -550,7 +550,7 @@ export default function Page() {
         OBSERVACIONES: 425,
       };
       drawRoundedRect(ctx, x1, y + 8, tw[title] || 340, 66, 20, navy);
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = "#f6fbfb";
       ctx.font = "bold 29px Arial";
       ctx.fillText(title, x1 + 34, y + 52);
       ctx.strokeStyle = green;
@@ -562,7 +562,7 @@ export default function Page() {
 
       const base = y + 100;
       if (!rows.length) {
-        ctx.fillStyle = "#66727c";
+        ctx.fillStyle = "#a4b8c3";
         ctx.font = "22px Arial";
         ctx.fillText("Sin datos cargados.", x1 + 42, base);
       } else {
@@ -572,14 +572,14 @@ export default function Page() {
           ctx.beginPath();
           ctx.arc(x1 + 40, cy - 7, 18, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = "#fff";
+          ctx.fillStyle = "#f6fbfb";
           ctx.font = "bold 18px Arial";
           ctx.textAlign = "center";
           ctx.fillText(String(idx + 1), x1 + 40, cy);
           ctx.textAlign = "left";
           render(x1 + 78, cy - 20, row);
           if (idx < rows.length - 1) {
-            ctx.strokeStyle = "#e0e5e8";
+            ctx.strokeStyle = "#284252";
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(x1 + 78, cy + 28);
@@ -666,10 +666,10 @@ export default function Page() {
     );
 
     drawIcon(ctx, 82, y + 66, "note");
-    drawRoundedRect(ctx, 150, y + 12, W - 186, 185, 24, "#e0e6ea");
-    drawRoundedRect(ctx, 146, y + 8, W - 182, 185, 24, "#fff", line);
+    drawRoundedRect(ctx, 150, y + 12, W - 186, 185, 24, "#08111a");
+    drawRoundedRect(ctx, 146, y + 8, W - 182, 185, 24, "#142432", line);
     drawRoundedRect(ctx, 146, y + 8, 425, 66, 20, navy);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#f6fbfb";
     ctx.font = "bold 29px Arial";
     ctx.fillText("OBSERVACIONES", 180, y + 52);
     ctx.strokeStyle = green;
@@ -684,7 +684,7 @@ export default function Page() {
 
     const footerY = H - 96;
     drawRoundedRect(ctx, 28, footerY, W - 56, 68, 24, navy);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#f6fbfb";
     ctx.font = "bold 25px Arial";
     ctx.fillText("Confirmar recepción cuando sea requerido.", 184, footerY + 43);
 
@@ -710,18 +710,18 @@ export default function Page() {
     const ctx = canvas.getContext("2d")!;
     ctx.scale(scale, scale);
 
-    const navy = "#0b2d42";
-    const green = "#2e7d6a";
-    const text = "#10212d";
+    const navy = "#102a36";
+    const green = "#5cc8b2";
+    const text = "#e8f2f4";
 
-    ctx.fillStyle = "#eef3f6";
+    ctx.fillStyle = "#0b1620";
     ctx.fillRect(0, 0, W, H);
     drawRoundedRect(ctx, 20, 20, W - 40, H - 40, 30, "transparent", navy);
     drawRoundedRect(ctx, 36, 36, W - 72, 150, 26, navy);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#f6fbfb";
     ctx.font = "bold 40px Arial";
     ctx.fillText("COMPARATIVO MENSUAL DE RECARGOS", 70, 102);
-    ctx.fillStyle = "#d5f3e7";
+    ctx.fillStyle = "#b8f3e4";
     ctx.font = "bold 22px Arial";
     ctx.fillText(`Turno B | ${String(month).padStart(2, "0")}/${year} | Mañana 07-13 | Tarde 13-20 | Noche 20 en adelante`, 72, 142);
 
@@ -745,8 +745,8 @@ export default function Page() {
     for (const p of personal) {
       const s = stats[p] || { guardias: 0, manana: 0, tarde: 0, noche: 0, total: 0, francos: 0, novedades: 0, detalle: [] };
       const ratio = s.total / maxRec;
-      ctx.fillStyle = ratio < 0.34 ? "#f3f7f9" : ratio < 0.67 ? "#e3f4ee" : "#c9eadf";
-      drawRoundedRect(ctx, 50, y, W - 100, 66, 15, ctx.fillStyle as string, "#dfe6e8");
+      ctx.fillStyle = ratio < 0.34 ? "#f3f7f9" : ratio < 0.67 ? "#e3f4ee" : "#24584f";
+      drawRoundedRect(ctx, 50, y, W - 100, 66, 15, ctx.fillStyle as string, "#284252");
       ctx.fillStyle = text;
       ctx.font = "bold 21px Arial";
       ctx.fillText(stripRank(p), 70, y + 38);
@@ -766,7 +766,7 @@ export default function Page() {
     }
 
     drawRoundedRect(ctx, 36, H - 90, W - 72, 54, 18, navy);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#f6fbfb";
     ctx.font = "bold 19px Arial";
     ctx.fillText("Objetivo: distribuir recargos y francos de forma pareja durante el mes.", 70, H - 56);
 
@@ -976,7 +976,7 @@ export default function Page() {
                 {personal.map((p) => {
                   const s = stats[p] || { guardias: 0, manana: 0, tarde: 0, noche: 0, total: 0, francos: 0, novedades: 0, detalle: [] };
                   return (
-                    <tr key={p} onClick={() => setSelectedPerson(p)} style={{ cursor: "pointer", background: selectedPerson === p ? "#e3f4ee" : undefined }}>
+                    <tr key={p} onClick={() => setSelectedPerson(p)} style={{ cursor: "pointer", background: selectedPerson === p ? "rgba(92, 200, 178, 0.16)" : undefined }}>
                       <td><strong>{stripRank(p)}</strong></td>
                       <td><span className="badge">{s.guardias}</span></td>
                       <td><span className="badge">{s.manana}</span></td>

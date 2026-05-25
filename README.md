@@ -193,3 +193,8 @@ Usar las clases ya existentes cuando sea posible:
 - `button-link`, `primary`, `secondary`, `success` y `danger` para acciones.
 
 Los colores principales están definidos en `app/globals.css` dentro de `:root`. Cambiando esas variables se modifica la identidad visual de toda la suite.
+
+
+## Paleta visual descansada
+
+La interfaz usa una paleta oscura/azulada con tarjetas de bajo brillo y acentos verde agua para reducir el cansancio visual durante el uso prolongado. Los colores principales están centralizados en `app/globals.css` dentro de `:root`, por lo que se pueden ajustar sin modificar cada pantalla.

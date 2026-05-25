@@ -484,7 +484,7 @@ export default function LicenciasPage() {
 
       const element = captureRef.current;
       const canvas = await window.html2canvas(element, {
-        backgroundColor: "#eef3f6",
+        backgroundColor: "#0b1620",
         scale: 2,
         width: element.scrollWidth,
         height: element.scrollHeight,
